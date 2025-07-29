@@ -2,12 +2,13 @@
 //  AppDelegate.swift
 //  PersonalityQuiz
 //
-//  Created by Student on 22/07/25.
+//  Created by Yoon Kwak on 11/3/20.
+//  Copyright © 2020 Yoon Kwak. All rights reserved.
 //
 
 import UIKit
 
-@main
+@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
