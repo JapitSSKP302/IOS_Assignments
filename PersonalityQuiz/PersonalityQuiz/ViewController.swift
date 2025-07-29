@@ -1,8 +1,13 @@
-
+//
+//  ViewController.swift
+//  PersonalityQuiz
+//
+//  Created by Student on 24/07/25.
+//
 
 import UIKit
 
-class IntroVC: UIViewController {
+class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

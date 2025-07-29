@@ -1,10 +1,15 @@
-
+//
+//  QuestionVC.swift
+//  PersonalityQuiz
+//
+//  Created by Student on 24/07/25.
+//
 
 import UIKit
 
 class QuestionVC: UIViewController {
     
-    //Outlets
+  
     @IBOutlet weak var questionLabel: UILabel!
     
     @IBOutlet weak var singleStackView: UIStackView!
@@ -32,9 +37,9 @@ class QuestionVC: UIViewController {
     
     @IBOutlet weak var progressView: UIProgressView!
     
-    //Properties
+
     var questionIndex = 0
-    //Initialize an empty collection that store the player's answers
+
     var answersChosen: [Answer] = []
     
     var questions: [Question] = [
@@ -68,7 +73,6 @@ class QuestionVC: UIViewController {
         super.viewDidLoad()
         updateUI()
 
-        // Do any additional setup after loading the view.
     }
     
     func updateUI() {

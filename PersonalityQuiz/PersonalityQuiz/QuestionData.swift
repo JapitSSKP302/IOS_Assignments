@@ -1,4 +1,9 @@
-
+//
+//  QuestionData.swift
+//  PersonalityQuiz
+//
+//  Created by Student on 24/07/25.
+//
 
 import Foundation
 
