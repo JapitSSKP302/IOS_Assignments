@@ -1,10 +1,4 @@
-//
-//  QuestionViewController.swift
-//  PersonalityQuiz
-//
-//  Created by Yoon Kwak on 11/3/20.
-//  Copyright © 2020 Yoon Kwak. All rights reserved.
-//
+
 
 import UIKit
 
