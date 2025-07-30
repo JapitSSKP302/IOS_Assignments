@@ -10,44 +10,52 @@ import UIKit
 class MiddleViewController: UIViewController {
 
   
-    @IBOutlet var label: UILabel!  // Change UIView to UILabel
+    @IBOutlet weak var label: UILabel!
         var eventNumber: Int = 1
         
-        func addEvent(from: String) {
-            if let existingText = label.text, !existingText.isEmpty {
-                label.text = "\(existingText)\nEvent Number \(eventNumber) was \(from)"
-            } else {
-                label.text = "Event Number \(eventNumber) was \(from)"
-            }
-            eventNumber += 1
-        }
+        
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        label.text = ""
         addEvent(from: "viewDidLoad")
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
+        print("View will appear")
             addEvent(from: "viewWillAppear")
         }
         
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
+            print("View did appear")
             addEvent(from: "viewDidAppear")
         }
         
         override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
+            print("View will disappear")
             addEvent(from: "viewWillDisappear")
         }
         
         override func viewDidDisappear(_ animated: Bool) {
             super.viewDidDisappear(animated)
+            print("View did disappear")
             addEvent(from: "viewDidDisappear")
         }
     
+    
+    func addEvent(from: String) {
+        let newEntry = "Event Number \(eventNumber) was \(from)"
+            if let existingText = label.text, !existingText.isEmpty {
+                label.text = existingText + "\n" + newEntry
+            } else {
+                label.text = newEntry
+            }
+            eventNumber += 1
+    }
 
     /*
     // MARK: - Navigation
