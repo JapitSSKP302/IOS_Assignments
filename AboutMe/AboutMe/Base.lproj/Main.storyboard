@@ -8,10 +8,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Me-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="AboutMe" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" userLabel="Me" customClass="ViewController" customModule="AboutMe" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -24,20 +24,20 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="pexels-pixabay-417173" translatesAutoresizingMaskIntoConstraints="NO" id="U5P-tR-2xg">
-                                <rect key="frame" x="76" y="396" width="240" height="128"/>
+                                <rect key="frame" x="76" y="362" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemYellowColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="" selectedImage="person.fill" catalog="system" id="WqB-bt-C3W"/>
+                    <tabBarItem key="tabBarItem" title="Me" image="person.fill" catalog="system" landscapeImage="person.fill" selectedImage="person.fill" id="WqB-bt-C3W"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="872.51908396946567" y="3.5211267605633805"/>
+            <point key="canvasLocation" x="-741" y="758"/>
         </scene>
-        <!--View Controller-->
+        <!--Family-->
         <scene sceneID="cbX-8V-yBN">
             <objects>
                 <viewController id="g7K-3Q-Zwf" sceneMemberID="viewController">
@@ -52,22 +52,21 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="person.2.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="mlw-TB-388">
-                                <rect key="frame" x="96" y="396" width="240" height="128"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="pexels-pixabay-417173" translatesAutoresizingMaskIntoConstraints="NO" id="4iL-JJ-z6F">
+                                <rect key="frame" x="76" y="362" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" systemColor="systemGrayColor"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="3am-pL-O7b"/>
                         <color key="backgroundColor" systemColor="systemTealColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="" selectedImage="person.3.fill" catalog="system" id="KoC-6L-c9B"/>
+                    <tabBarItem key="tabBarItem" title="Family" image="person.3.fill" catalog="system" selectedImage="person.3.fill" id="KoC-6L-c9B"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QrB-mz-Npr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1605.3435114503816" y="3.5211267605633805"/>
+            <point key="canvasLocation" x="149" y="758"/>
         </scene>
-        <!--View Controller-->
+        <!--Hobbies-->
         <scene sceneID="ezV-l9-qPg">
             <objects>
                 <viewController id="GCg-oY-NSv" sceneMemberID="viewController">
@@ -90,18 +89,19 @@
                         <viewLayoutGuide key="safeArea" id="N5P-eu-mFc"/>
                         <color key="backgroundColor" systemColor="systemOrangeColor"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="" selectedImage="point.topleft.down.to.point.bottomright.curvepath.fill" catalog="system" id="saQ-cY-Vsg"/>
+                    <tabBarItem key="tabBarItem" title="Hobbies" image="guitars.fill" catalog="system" selectedImage="guitars.fill" id="saQ-cY-Vsg"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nb7-TT-VBs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2394.6564885496182" y="3.5211267605633805"/>
+            <point key="canvasLocation" x="1077" y="758"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="hQm-w5-7qG">
             <objects>
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="2SW-Yz-TD7" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="sxi-JX-yPE">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" backgroundImage="square.and.arrow.up" catalog="system" id="sxi-JX-yPE">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
@@ -117,19 +117,16 @@
         </scene>
     </scenes>
     <resources>
-        <image name="person.2.fill" catalog="system" width="128" height="86"/>
+        <image name="guitars.fill" catalog="system" width="128" height="104"/>
         <image name="person.3.fill" catalog="system" width="128" height="66"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
         <image name="pexels-pixabay-417173" width="1084" height="670"/>
-        <image name="point.topleft.down.to.point.bottomright.curvepath.fill" catalog="system" width="119" height="128"/>
-        <systemColor name="systemGrayColor">
-            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
+        <image name="square.and.arrow.up" catalog="system" width="110" height="128"/>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemTealColor">
-            <color red="0.18823529411764706" green="0.69019607843137254" blue="0.7803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.18823529410000001" green="0.69019607839999997" blue="0.78039215689999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
