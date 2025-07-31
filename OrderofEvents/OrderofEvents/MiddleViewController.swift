@@ -17,14 +17,13 @@ class MiddleViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        label.text = ""
         addEvent(from: "viewDidLoad")
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-        print("View will appear")
+            print("View will appear")
             addEvent(from: "viewWillAppear")
         }
         
@@ -48,13 +47,11 @@ class MiddleViewController: UIViewController {
     
     
     func addEvent(from: String) {
-        let newEntry = "Event Number \(eventNumber) was \(from)"
-            if let existingText = label.text, !existingText.isEmpty {
-                label.text = existingText + "\n" + newEntry
-            } else {
-                label.text = newEntry
+            if let existingText = label.text{
+                label.text = "\(existingText)\n Event Number \(eventNumber) was \(from)"
+                eventNumber += 1
+
             }
-            eventNumber += 1
     }
 
     /*
