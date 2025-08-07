@@ -371,12 +371,19 @@
                             <constraint firstItem="ac7-bj-VZg" firstAttribute="centerX" secondItem="xFv-RI-CDZ" secondAttribute="centerX" id="nLz-cj-gPu"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Suggested Meal" id="4Lt-Q4-mwN"/>
+                    <navigationItem key="navigationItem" title="Suggested Meal" id="4Lt-Q4-mwN">
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="GPm-jB-uZf">
+                            <connections>
+                                <segue destination="Uzl-Ds-X31" kind="unwind" unwindAction="unwindSegue:" id="cm3-hq-jqz"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="resultlabel1" destination="iCm-4F-8YF" id="eO6-pG-DfV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9vc-lx-v8f" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="Uzl-Ds-X31" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="3237.4045801526718" y="3.5211267605633805"/>
         </scene>
