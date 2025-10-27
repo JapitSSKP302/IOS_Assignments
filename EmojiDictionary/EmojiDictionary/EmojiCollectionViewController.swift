@@ -2,38 +2,17 @@
 
 import UIKit
 
-private let reuseIdentifier = "Item"
-
 class EmojiCollectionViewController: UICollectionViewController {
+    @IBOutlet var layoutButton: UIBarButtonItem!
     
+    private let headerKind = "header"
     
-    override func collectionView(_ collectionView: UICollectionView,
-                                 contextMenuConfigurationForItemAt indexPath: IndexPath,
-                                 point: CGPoint) -> UIContextMenuConfiguration? {
-        
-        let emoji = emojis[indexPath.item]
-        
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-            
-            // Create a "Delete" action
-            let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
-                self.deleteEmoji(at: indexPath)
-            }
-            
-            // You can add more actions here if you want
-            
-            // Return the menu with the actions
-            return UIMenu(title: "", children: [delete])
-        }
-    }
-
-
     var emojis: [Emoji] = [
         Emoji(symbol: "😀", name: "Grinning Face", description: "A typical smiley face.", usage: "happiness"),
         Emoji(symbol: "😕", name: "Confused Face", description: "A confused, puzzled face.", usage: "unsure what to think; displeasure"),
         Emoji(symbol: "😍", name: "Heart Eyes", description: "A smiley face with hearts for eyes.", usage: "love of something; attractive"),
         Emoji(symbol: "🧑‍💻", name: "Developer", description: "A person working on a MacBook (probably using Xcode to write iOS apps in Swift).", usage: "apps, software, programming"),
-        Emoji(symbol: "🐢", name: "Turtle", description: "A cute turtle.", usage: "something slow"),
+        Emoji(symbol: "🐢", name: "Turtle", description: "A cute turtle.", usage: "Something slow"),
         Emoji(symbol: "🐘", name: "Elephant", description: "A gray elephant.", usage: "good memory"),
         Emoji(symbol: "🍝", name: "Spaghetti", description: "A plate of spaghetti.", usage: "spaghetti"),
         Emoji(symbol: "🎲", name: "Die", description: "A single die.", usage: "taking a risk, chance; game"),
@@ -43,93 +22,228 @@ class EmojiCollectionViewController: UICollectionViewController {
         Emoji(symbol: "💤", name: "Snore", description: "Three blue \'z\'s.", usage: "tired, sleepiness"),
         Emoji(symbol: "🏁", name: "Checkered Flag", description: "A black-and-white checkered flag.", usage: "completion")
     ]
+    
+    private var collectionDataSource: UICollectionViewDiffableDataSource<String, Emoji.ID>!
+    private var emojiIdentifiersSnapshot: NSDiffableDataSourceSnapshot<String, Emoji.ID> {
+        
+        var snapshot = NSDiffableDataSourceSnapshot<String, Emoji.ID>()
+        let grouped = Dictionary(grouping: emojis, by: {$0.sectionTitle})
+        
+        for(title, emojis) in grouped.sorted(by: {$0.0 < $1.0 }){
+            snapshot.appendSections([title])
+            snapshot.appendItems(emojis.sorted(by: { $0.name < $1.name }).map(\.id))
+        }
+        
+        
+        
+        return snapshot
+    }
+    
+    var layouts: [Layout: UICollectionViewLayout] = [:]
+    
+    var activeLayout: Layout = .grid {
+        didSet {
+            if let layout = layouts[activeLayout] {
+                var snapshot = collectionDataSource.snapshot()
+                let visibleIDs =
+                    collectionView.indexPathsForVisibleItems.compactMap {
+                        collectionDataSource.itemIdentifier(for: $0)
+                    }
+                snapshot.reloadItems(visibleIDs)
+                collectionDataSource.apply(snapshot)
 
+                collectionView.setCollectionViewLayout(layout, animated: true) { (_) in
+                    switch self.activeLayout {
+                    case .grid:
+                        self.layoutButton.image = UIImage(systemName: "rectangle.grid.1x2")
+                    case .column:
+                        self.layoutButton.image = UIImage(systemName: "square.grid.2x2")
+                    }
+                }
+            }
+        }
+    }
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(1.0))
         
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(70))
+        layouts[.grid] = generateGridLayout()
+        layouts[.column] = generateColumnLayout()
         
+        if let selectedLayout = layouts[activeLayout] {
+               collectionView.collectionViewLayout = selectedLayout
+        }
+   
         
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
-                                                           subitem: item,
-                                                           count: 1)
-
-            let section = NSCollectionLayoutSection(group: group)
-
-            collectionView.collectionViewLayout = UICollectionViewCompositionalLayout(section: section)
+        configureDataSource()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        collectionView.reloadData()
+        super.viewWillAppear(animated)
+        collectionDataSource.apply(emojiIdentifiersSnapshot, animatingDifferences: true)
     }
-
-    // MARK: UICollectionViewDataSource
-
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 0 {
-            return emojis.count
-        } else {
-            return 0
-        }
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
     
-        //Step 2: Fetch model object to display
-        let emoji = emojis[indexPath.item]
-
-        //Step 3: Configure cell
-        cell.update(with: emoji)
-
-        //Step 4: Return cell
-        return cell
+    func configureDataSource() {
+        // Step 1: Cell handler
+        let cellHandler: UICollectionView.CellRegistration<EmojiCollectionViewCell, Emoji.ID>.Handler = { [weak self] cell, indexPath, itemIdentifier in
+            guard let self,
+                  let emoji = self.emojis.first(where: { $0.id == itemIdentifier }) else {
+                return
+            }
+            cell.update(with: emoji)
+        }
+        
+        // Step 2: Two cell registrations for different layouts
+        let itemNib = UINib(nibName: "EmojiCollectionViewCell+Item", bundle: Bundle(for: EmojiCollectionViewCell.self))
+        let itemCellRegistration = UICollectionView.CellRegistration<EmojiCollectionViewCell, Emoji.ID>(cellNib: itemNib, handler: cellHandler)
+        
+        let columnItemNib = UINib(nibName: "EmojiCollectionViewCell+ColumnItem", bundle: Bundle(for: EmojiCollectionViewCell.self))
+        let columnItemCellRegistration = UICollectionView.CellRegistration<EmojiCollectionViewCell, Emoji.ID>(cellNib: columnItemNib, handler: cellHandler)
+        
+        // Step 3: Diffable Data Source
+        collectionDataSource = UICollectionViewDiffableDataSource<String, Emoji.ID>(collectionView: collectionView) { [weak self] collectionView, indexPath, itemIdentifier in
+            guard let self else { return nil }
+            // Choose cell registration based on activeLayout
+            let registration = self.activeLayout == .grid ? itemCellRegistration : columnItemCellRegistration
+            return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: itemIdentifier)
+        }
+        
+        // Step 4: Header registration
+        let headerRegistration = UICollectionView.SupplementaryRegistration<EmojiCollectionViewHeader>(elementKind: headerKind) { [weak self] supplementaryView, elementKind, indexPath in
+            guard let self else { return }
+            let snapshot = self.collectionDataSource.snapshot()
+            let sectionID = snapshot.sectionIdentifiers[indexPath.section]
+            supplementaryView.titleLabel.text = sectionID
+        }
+        
+        // Step 5: Supplementary view provider
+        collectionDataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+            return collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+        }
     }
 
+    
+    
+    func generateColumnLayout() -> UICollectionViewLayout {
+        let padding: CGFloat = 10
+        let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)
+                                                                            ))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(120)), subitem: item, count: 1)
+        
+        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: padding, bottom: 0, trailing: padding)
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.interGroupSpacing = padding
+        
+        section.contentInsets = NSDirectionalEdgeInsets(top: padding, leading: 0, bottom: padding, trailing: 0)
+        
+        section.boundarySupplementaryItems = [generateHeader()]
+        
+        return UICollectionViewCompositionalLayout(section: section)
+    }
+    
+    
+    func generateGridLayout() -> UICollectionViewLayout {
+        let padding: CGFloat = 10
+        let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1)
+            )
+        )
+        
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1/4)), subitem: item, count: 2)
+        
+        group.interItemSpacing = .fixed(padding)
+        
+        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: padding, bottom: 0, trailing: padding)
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.interGroupSpacing = padding
+        
+        section.contentInsets = NSDirectionalEdgeInsets(top: padding, leading: 0, bottom: padding, trailing: 0)
+        
+        section.boundarySupplementaryItems = [generateHeader()]
+        return UICollectionViewCompositionalLayout(section: section)
+        
+    }
+    
+    
+    func generateHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
+        let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(40)), elementKind: headerKind, alignment: .top)
+        
+        header.pinToVisibleBounds = true
+        
+        return header
+    }
+    
+    
+    
+    @IBAction func switchLayouts(sender: UIBarButtonItem) {
+        switch activeLayout{
+        case .grid:
+            activeLayout = .column
+        case .column:
+            activeLayout = .grid
+        }
+    }
 
-        func deleteEmoji(at indexPath: IndexPath){
-            emojis.remove(at: indexPath.row)
-            collectionView.deleteItems(at: [indexPath])
-        }
-            
-   
-    @IBSegueAction func addEditEmoji(_ coder: NSCoder, sender: Any?) -> AddEditEmojiTableViewController? {
-        if let cell = sender as? UICollectionViewCell, let indexPath = collectionView.indexPath(for: cell) {
-            // Editing Emoji
-            let emojiToEdit = emojis[indexPath.row]
-            return AddEditEmojiTableViewController(coder: coder, emoji: emojiToEdit)
-        } else {
-            // Adding Emoji
-            return AddEditEmojiTableViewController(coder: coder, emoji: nil)
-        }
+    @IBSegueAction func addEmoji(_ coder: NSCoder, sender: Any?) -> AddEditEmojiTableViewController? {
+        return AddEditEmojiTableViewController(coder: coder, emoji: nil)
     }
     
     @IBAction func unwindToEmojiTableView(segue: UIStoryboardSegue) {
         guard segue.identifier == "saveUnwind",
             let sourceViewController = segue.source as? AddEditEmojiTableViewController,
             let emoji = sourceViewController.emoji else { return }
-        if let path = collectionView.indexPathsForSelectedItems?.first {
-            emojis[path.row] = emoji
-            collectionView.reloadItems(at: [path])
-        } else {
-            let newIndexPath = IndexPath(row: emojis.count, section: 0)
-            emojis.append(emoji)
-            collectionView.reloadItems(at: [newIndexPath])
-        }
-        // Update the data source and collection view
+            if let i = emojis.firstIndex(where: { $0 == emoji}) {
+                emojis[i] = emoji
+                var snapshot = collectionDataSource.snapshot()
+                collectionDataSource.apply(snapshot, animatingDifferences: true)
+            }else{
+                emojis.append(emoji)
+                collectionDataSource.apply(emojiIdentifiersSnapshot, animatingDifferences: true)
+            }
     }
 
+    // MARK: - UICollectionViewDelegate
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let emojiID = collectionDataSource.itemIdentifier(for: indexPath),
+        let emojiToEdit = emojis.first(where: { $0.id == emojiID }) else {
+            return
+        }
+        
+        // Editing Emoji
+        let storyboard = UIStoryboard(name: "Main", bundle: Bundle(for: AddEditEmojiTableViewController.self))
+        let editController = storyboard.instantiateViewController(identifier: "AddEditEmojiTableViewController") { coder in
+            AddEditEmojiTableViewController(coder: coder, emoji: emojiToEdit)
+        }
+        
+        let navigationController = UINavigationController(rootViewController: editController)
+        present(navigationController, animated: true)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { (elements) -> UIMenu? in
+            let delete = UIAction(title: "Delete") { (action) in
+                self.deleteEmoji(at: indexPath)
+            }
+            
+            return UIMenu(title: "", image: nil, identifier: nil, options: [], children: [delete])
+        }
+        
+        return config
+    }
+
+    func deleteEmoji(at indexPath: IndexPath) {
+        guard let emojiID = collectionDataSource.itemIdentifier(for: indexPath) else {
+            return
+        }
+        
+        emojis.removeAll(where: { $0.id == emojiID })
+        collectionDataSource.apply(emojiIdentifiersSnapshot,animatingDifferences: true)
+    }
 }
